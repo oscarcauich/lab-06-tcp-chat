@@ -40,6 +40,17 @@ function clientConnection(socket){
       return;
     }
 
+    if(data.startsWith('/troll')){
+      let content = data.split(' ');
+
+      for(var i = 0; i < content[1]; i++){
+        clientPool.forEach((item) =>{
+          item.write(`${content[2]}`);
+        });
+      }
+      return;
+    }
+
     clientPool.forEach((item) =>{
       item.write(`${socket.nickName}: ${data}`);
     });
