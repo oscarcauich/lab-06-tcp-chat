@@ -16,7 +16,6 @@ function clientConnection(socket){
   console.log(socket.nickName, 'has connected');
 
   clientPool = [...clientPool, socket];
-  console.log('here is the', clientPool[0].remoteAddress);
   socket.on('data', (buffer) => {
     let data = buffer.toString(); //data typed in by clients
     if(data.startsWith('/nickname')){
@@ -31,10 +30,11 @@ function clientConnection(socket){
       let content = data.split('/dm')[1] || '';
       let dmNickname = content.split(' ')[1];
 
+      let msg = data.split(' ');
+      msg = msg.slice(2);
       clientPool.forEach((item) =>{
         if(item.nickName == dmNickname){
-          console.log(item.nickName);
-          item.write(`${socket.nickName} says: ${data}`);
+          item.write(`${socket.nickName} says: ${msg.join(' ')}`);
         }
       });
       return;
@@ -47,7 +47,12 @@ function clientConnection(socket){
         clientPool.forEach((item) =>{
           item.write(`${content[2]}`);
         });
+        return;
       }
+    }
+    if(data.startsWith('/quit')){
+      socket.end();
+      console.log( `${socket.nickName}'s session has ended`);
       return;
     }
 
@@ -56,7 +61,6 @@ function clientConnection(socket){
     });
   });
 }
-
 
 server.on('connection', clientConnection);
 
