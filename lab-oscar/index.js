@@ -18,8 +18,8 @@ function clientConnection(socket){
   clientPool = [...clientPool, socket];
   socket.on('data', (buffer) => {
     let data = buffer.toString(); //data typed in by clients
-    if(data.startsWith('/nickname')){
-      socket.nickName = data.split('/nickname ')[1] || socket.nickName;
+    if(data.startsWith('/nick')){
+      socket.nickName = data.split('/nick ')[1] || socket.nickName;
       socket.nickName = socket.nickName.trim();
       socket.write(`Your nickname was change to ${socket.nickName}\n`);
       return;
@@ -42,13 +42,14 @@ function clientConnection(socket){
 
     if(data.startsWith('/troll')){
       let content = data.split(' ');
+      let msg = content.slice(2);
 
       for(var i = 0; i < content[1]; i++){
         clientPool.forEach((item) =>{
-          item.write(`${content[2]}`);
+          item.write(`${msg.join(' ')}`);
         });
-        return;
       }
+      return;
     }
     if(data.startsWith('/quit')){
       socket.end();
