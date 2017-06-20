@@ -16,6 +16,15 @@ function clientConnection(socket){
   console.log(socket.nickName, 'has connected');
 
   clientPool = [...clientPool, socket];
+
+  function handleErrorAndDesconects() {
+    console.log(`${socket.nickname} left the chat`);
+    clientPool = clientPool.filter(item => item !== socket);
+  }
+
+  socket.on('err', handleErrorAndDesconects);
+  socket.on('close', handleErrorAndDesconects);
+
   socket.on('data', (buffer) => {
     let data = buffer.toString(); //data typed in by clients
     if(data.startsWith('/nick')){
